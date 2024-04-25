@@ -1,0 +1,9 @@
+# Ohjaa pyynnön index.php-skriptille, jos pyynnön tiedostoa/hakemistoa ei ole olemassa.
+
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# QSA pyytää lisäämään parametrit uuden pyynnön loppuun.
+# L signaloi tämän olevan viimeinen suoritettava sääntö.
