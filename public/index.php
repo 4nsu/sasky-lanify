@@ -12,13 +12,16 @@ $request = strtok($request, '?');
 // Luodaan uusi Plates-olio ja kytketään se sovelluksen sivupohjiin.
 $templates = new League\Plates\Engine(TEMPLATE_DIR);
 
+// Kutsukäsittelijän ehtolause.
 // Selvitetään mitä sivua on kutsuttu ja suoritetaan sivua vastaava käsittelijä.
 if ($request === '/' || $request === '/tapahtumat') {
-  echo $templates->render('tapahtumat');
+    require_once MODEL_DIR . 'tapahtuma.php';
+    $tapahtumat = haeTapahtumat();
+    echo $templates->render('tapahtumat', ['tapahtumat' => $tapahtumat]);
 } else if ($request === '/tapahtuma') {
-  echo $templates->render('tapahtuma');
+    echo $templates->render('tapahtuma');
 } else {
-  echo $templates->render('notfound');
+    echo $templates->render('notfound');
 }
 
-?> 
+?>
