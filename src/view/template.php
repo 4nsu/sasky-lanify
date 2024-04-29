@@ -2,7 +2,8 @@
 <html lang="fi">
     <head>
         <title>lanify - <?=$this->e($title)?></title>
-        <meta charset="UTF-8">    
+        <meta charset="UTF-8">
+        <link href="styles/styles.css" rel="stylesheet">
     </head>
     <body>
         <header>
