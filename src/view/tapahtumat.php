@@ -13,6 +13,7 @@
         echo "<div>";
             echo "<div>$tapahtuma[nimi]</div>";
             echo "<div>" . $start->format('j.n.Y') . "-" . $end->format('j.n.Y') . "</div>";
+            echo "<div><a href='tapahtuma?id=" . $tapahtuma['idtapahtuma'] . "'>TIEDOT</a></div>";
         echo "</div>";
 
     }
