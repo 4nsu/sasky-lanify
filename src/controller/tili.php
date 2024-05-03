@@ -37,9 +37,14 @@ function lisaaTili($formdata) {
     if (!isset($formdata['email']) || !$formdata['email']) {
         $error['email'] = "Anna sähköpostiosoitteesi.";
     } else {
-        // ...ja onko se oikeassa muodossa.
+        // ...ja onko se oikeassa muodossa...
         if (!filter_var($formdata['email'], FILTER_VALIDATE_EMAIL)) {
-        $error['email'] = "Sähköpostiosoite on virheellisessä muodossa.";
+            $error['email'] = "Sähköpostiosoite on virheellisessä muodossa.";
+        } else {
+            // ...eikä vielä käytössä.
+            if (haeHenkiloSahkopostilla($formdata['email'])) {
+                $error['email'] = "Sähköpostiosoite on jo käytössä.";
+            }
         }
     }
 
