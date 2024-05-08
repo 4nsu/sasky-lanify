@@ -4,7 +4,7 @@ function tarkistaKirjautuminen($email="", $salasana="") {
 
     // Haetaan käyttäjän tiedot sen sähköpostiosoitteella. 
     require_once(MODEL_DIR . 'henkilo.php');
-    $tiedot = haeHenkiloSahkopostilla($email);
+    $tiedot = haeHenkilo($email);
     $tiedot = array_shift($tiedot);
 
     // Tarkistetaan ensin löytyikö käyttäjä. Jos löytyi, niin

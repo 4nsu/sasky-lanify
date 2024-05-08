@@ -15,6 +15,15 @@ $request = strtok($request, '?');
 // Luodaan uusi Plates-olio ja kytketään se sovelluksen sivupohjiin.
 $templates = new League\Plates\Engine(TEMPLATE_DIR);
 
+// Haetaan kirjautuneen käyttäjän tiedot,
+// eli katsotaan onko käyttäjä kirjautunut.
+if (isset($_SESSION['user'])) {
+    require_once MODEL_DIR . 'henkilo.php';
+    $loggeduser = haeHenkilo($_SESSION['user']);
+} else {
+    $loggeduser = NULL;
+}
+
 // Kutsukäsittelijän ehtolause.
 // Selvitetään mitä sivua on kutsuttu ja suoritetaan sivua vastaava käsittelijä.
 switch ($request) {
