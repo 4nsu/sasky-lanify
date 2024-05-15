@@ -1,6 +1,6 @@
 <?php
 
-function lisaaTili($formdata) {
+function lisaaTili($formdata, $baseurl='') {
 
     // Tuodaan funktiot, joilla voidaan lisätä henkilön tiedot kantaan.
     require_once(MODEL_DIR . 'henkilo.php');
@@ -87,11 +87,26 @@ function lisaaTili($formdata) {
 
         // Tarkistetaan onnistuiko henkilön tietojen lisääminen.
         if ($idhenkilo) {
-            return [
+            // Luodaan käyttäjälle aktivointiavain ja muodostetaan aktivointilinkki.
+            require_once(HELPERS_DIR . "secret.php");
+            $avain = generateActivationCode($email);
+            $url = 'https://' . $_SERVER['HTTP_HOST'] . $baseurl . "/vahvista?key=$avain";
+
+            // Päivitetään aktivointiavain tietokantaan ja lähetetään käyttäjälle sähköpostia.
+            if (paivitaVahvavain($email,$avain) && lahetaVahvavain($email,$url)) {
+                // Onnistui, palautetaan tieto tilin onnistuneesta luomisesta.
+                return [
                 "status" => 200,
                 "id"     => $idhenkilo,
                 "data"   => $formdata
-            ];
+                ];
+            } else {
+                // Muuten palautetaan virhekoodi, joka ilmoittaa, että jokin lisäyksessä epäonnistui.
+                return [
+                "status" => 500,
+                "data"   => $formdata
+                ];
+            }
         } else {
             return [
                 "status" => 500,
@@ -111,5 +126,20 @@ function lisaaTili($formdata) {
 
     }
 }
+
+function lahetaVahvavain($email,$url) {
+    $message = "Hei!\n\n" . 
+        "Olet rekisteröitynyt Lanify-palveluun tällä\n" . 
+        "sähköpostiosoitteella. Klikkaamalla alla olevaa\n" . 
+        "linkkiä vahvistat käyttämäsi sähköpostiosoitteen\n" .
+        "ja pääset käyttämään Lanify-palvelua.\n\n" . 
+        "$url\n\n" .
+        "Jos et ole rekisteröitynyt Lanify palveluun, niin\n" . 
+        "silloin tämä sähköposti on tullut sinulle\n" .
+        "vahingossa. Siinä tapauksessa ole hyvä ja\n" .
+        "poista tämä viesti.\n\n".
+        "Terveisin, Lanify-palvelu";
+    return mail($email,'Lanify-tilin aktivointilinkki',$message);
+}  
 
 ?>
