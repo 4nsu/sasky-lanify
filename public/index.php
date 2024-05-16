@@ -125,6 +125,18 @@ switch ($request) {
             header("Location: " . $config['urls']['baseUrl']);
         }
         break;
+    case "/tilaa_vaihtoavain":
+        $formdata = cleanArrayData($_POST);
+        // Tarkistetaan onko lomake lähetetty.
+        if (isset($formdata['laheta'])) {
+
+            // TODO vaihtovaimen tilauksen käsittely
+            
+        } else {
+            // Lomaketta ei ole lähetetty, tulostetaan lomake.
+            echo $templates->render('tilaa_vaihtoavain_lomake');
+        }
+        break;
     default:
         echo $templates->render('notfound');
 }
