@@ -129,9 +129,26 @@ switch ($request) {
         $formdata = cleanArrayData($_POST);
         // Tarkistetaan onko lomake lähetetty.
         if (isset($formdata['laheta'])) {
-
-            // TODO vaihtovaimen tilauksen käsittely
-            
+            require_once MODEL_DIR . 'henkilo.php';
+            // Tarkistetaan onko lomakkeelle syötetty käyttäjätili olemassa.
+            $user = haeHenkilo($formdata['email']);
+            if ($user) {
+                // Käyttäjätili olemassa, luodaan salasanan vaihtolinkki ja lähetetään se.
+                require_once CONTROLLER_DIR . 'tili.php';
+                $tulos = luoVaihtoavain($formdata['email'], $config['urls']['baseUrl']);
+                if ($tulos['status'] == "200") {
+                    // Vaihtolinkki lähetetty sähköpostiin.
+                    echo $templates->render('tilaa_vaihtoavain_lahetetty');
+                    break;
+                }
+                // Vaihtolinkin lähetyksessä virhe.
+                echo $templates->render('virhe');
+                break;
+            } else {
+                // Tunnuksella ei käyttäjätiliä, turvallisuus syistä tulostetaan silti summittainen ilmoitus.
+                echo $templates->render('tilaa_vaihtoavain_lahetetty');
+                break;
+            }
         } else {
             // Lomaketta ei ole lähetetty, tulostetaan lomake.
             echo $templates->render('tilaa_vaihtoavain_lomake');
