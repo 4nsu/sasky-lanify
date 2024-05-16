@@ -175,9 +175,17 @@ switch ($request) {
         // Vaihtoavain on voimassa, tarkistetaan onko lomakkeen kautta syötetty tietoa.
         $formdata = cleanArrayData($_POST);
         if (isset($formdata['laheta'])) {
-
-            // TODO Salasanalomakkeen käsittelijä
-
+            // Lomakkeelle syötetyt uudet salasanat annetaan kontrollerin käsittelyyn.
+            require_once CONTROLLER_DIR . 'tili.php';
+            $tulos = resetoiSalasana($formdata,$resetkey);
+            // Tarkistetaan resetoinnin lopputulos.
+            if ($tulos['status'] == "200") {
+                // Salasana vaihdettu.
+                echo $templates->render('reset_valmis');
+                break;
+            }
+            // Salasanan vaihdossa virheitä.
+            echo $templates->render('reset_lomake',['error' => $tulos['error']]);
         } else {
             // Lomakkeen tietoja ei ole vielä täytetty, tulostetaan lomake.
             echo $templates->render('reset_lomake', ['error' => '']);

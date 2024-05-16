@@ -181,5 +181,73 @@ function luoVaihtoavain($email, $baseurl='') {
     }
 
 }
-  
+
+function resetoiSalasana($formdata, $resetkey='') {
+
+    // Tuodaan henkilo-mallin tietokanta funktiot.
+    require_once(MODEL_DIR . 'henkilo.php');
+
+    // Alustetaan virhemuuttuja, joka palautetaan lopuksi joko tyhjänä tai virhetekstillä.
+    $error = "";
+
+    // Seuraavaksi tehdään lomaketietojen tarkistus.
+    // Jos kentän arvo ei täytä tarkistuksen ehtoja, error-muuttujaan lisätään virhekuvaus.
+
+    // Tarkistetaan, että kummatkin salasanat on annettu ja että ne ovat keskenään samat.
+    if (isset($formdata['salasana1']) && $formdata['salasana1'] && isset($formdata['salasana2']) && $formdata['salasana2']) {
+        if ($formdata['salasana1'] != $formdata['salasana2']) {
+            $error = "Salasanasi eivät olleet samat!";
+        }
+    } else {
+        $error = "Syötä salasanasi kahteen kertaan.";
+    }
+
+    // Vaihdetaan käyttäjälle uusi salasana, jos error-muuttuja on tyhjä.
+    if (!$error) {
+
+        // Salataan salasana.
+        $salasana = password_hash($formdata['salasana1'], PASSWORD_DEFAULT);
+
+        // Vaihdetaan käyttäjälle uusi salasana vaihtoavaimella.
+        // Palautusarvona päivitettyjen rivien lukumäärä.
+        $rowcount = vaihdaSalasanaAvaimella($salasana,$resetkey);
+
+        // Palautetaan JSON-tyyppinen taulukko, jossa:
+        //  status   = Koodi, joka kertoo päivityksen onnistumisen.
+        //             Hyvin samankaltainen kuin HTTP-protokollan vastauskoodi.
+        //             200 = OK
+        //             400 = Bad Request
+        //             500 = Internal Server Error
+        //  error    = Taulukko, jossa on lomaketarkistuksessa esille tulleet virheet.
+
+        // Tarkistetaan onnistuiko salasanan vaihtaminen.
+        if ($rowcount) {
+
+            return [
+            "status"   => 200,
+            "resetkey" => $resetkey
+            ];
+
+        } else {
+
+            return [
+            "status"   => 500,
+            "resetkey" => $resetkey
+            ];
+
+        }    
+
+    } else {
+
+        // Lomaketietojen tarkistuksessa ilmeni virheitä.
+        return [
+        "status"   => 400,
+        "resetkey" => $resetkey,
+        "error"    => $error
+        ];
+
+    }
+
+}
+
 ?>
