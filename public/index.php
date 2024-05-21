@@ -72,6 +72,7 @@ switch ($request) {
                 if ($user['vahvistettu']) {
                     session_regenerate_id();
                     $_SESSION['user'] = $user['email'];
+                    $_SESSION['admin'] = $user['admin'];
                     header("Location: " . $config['urls']['baseUrl']);
                 } else {
                     echo $templates->render('kirjaudu', [ 'error' => ['virhe' => 'Tili on vahvistamatta! Ole hyvä, ja vahvista tili sähköpostissa olevalla linkillä.']]);
