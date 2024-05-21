@@ -193,7 +193,14 @@ switch ($request) {
             break;
         }
         
-        break;      
+        break;
+    case (bool)preg_match('/\/admin.*/',$request):
+        if ($loggeduser["admin"]) {
+            echo "Ylläpitosivut";
+        } else {
+            echo $templates->render('admin_ei_oikeuksia');
+        }
+        break;
     default:
         echo $templates->render('notfound');
 }
